@@ -1,0 +1,44 @@
+# Static configuration
+cuda_visible_devices: "0, 1" # we only have 1 GPU
+
+model_name: "mistralai/Mistral-7B-Instruct-v0.3"
+model_weight_dir: "results/results_2025-03-21_00-54-26/sft/iteration_0"
+tokenizer_name: "mistralai/Mistral-7B-Instruct-v0.3"
+
+data_directory: "data"
+# ift_dataset: "srlm_ift.jsonl"
+ift_dataset: "HealthCareMagic-3k-en.jsonl"
+model_directory: "results"
+
+wandb_enable: True
+wandb_project: "Self Rewarding Language Models"
+
+peft_config:
+  target_modules:
+    - "q_proj"
+    - "k_proj"
+    - "v_proj"
+    - "o_proj"
+    - "gate_proj"
+  lora_dropout: 0.5
+  lora_alpha: 16
+  lora_r: 16
+
+iterations: 3 # 5
+
+sft_training:
+  learning_rate: 5e-5
+  batch_size: 4
+  max_seq_length: 2048 #1024
+
+dpo_training:
+  learning_rate: 5e-5
+  batch_size: 4
+  max_seq_length: 2048 #1024
+  max_prompt_length: 2048 #1024
+
+generate_prompts:
+  new_prompts: 300 # 500
+
+response_prompts:
+  new_prompts: 4 # 4
