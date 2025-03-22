@@ -166,3 +166,6 @@ run.sh
 benchmark.sh
 iteration.sh
 benchmark/
+notebooks/
+images/
+LICENSE
