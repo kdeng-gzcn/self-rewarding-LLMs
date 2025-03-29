@@ -3,6 +3,7 @@ import logging
 import re
 import pandas as pd
 from typing import List, Dict, Any, Union
+import torch
 from transformers import PreTrainedTokenizer, PreTrainedModel
 
 from src.utils.prompts import judge_prompt
@@ -38,11 +39,12 @@ def do_sample(
             num_return_sequences=1,
             top_p=0.9,
             temperature=0.6,
-            max_new_tokens=1024,#100
+            max_new_tokens=512, # 100
         )
 
         answer = tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0]
         answer = answer[len(prompt)+1:].strip() # try to clean up the answer
+        torch.cuda.empty_cache()
         return answer
     except Exception as e:
         logger.error(f"Error in do_sample: {e}")
@@ -105,6 +107,8 @@ def generate(
                 }
             )
 
+            logger.info(f"🤡🤡🤡 For id {prompt_id}, reward-model generated score: {score}")
+
             df_results = pd.DataFrame(results)
             df_results.to_json(output_path, orient="records", lines=True)
     except Exception as e:
@@ -117,6 +121,7 @@ def generate_scores(
     config: Dict[str, Any],
     iteration: int,
     responses_path: str,
+    max_responses: int = None,
 ) -> Union[str, None]:
     """
     Generates scores for the given iteration and saves them to the output path.
@@ -137,8 +142,10 @@ def generate_scores(
         os.makedirs(output_dir, exist_ok=True)
         output_path = output_dir / "gen_scores.jsonl"
         logger.info(f"Output path: {output_path}")
-
+        
         gen_responses = pd.read_json(responses_path, lines=True)
+        if max_responses:
+            gen_responses = gen_responses.head(max_responses)
 
         generate(
             model=model,

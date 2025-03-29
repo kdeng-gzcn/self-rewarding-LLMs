@@ -3,6 +3,7 @@ import os
 from transformers import TextStreamer
 import pandas as pd
 from typing import List, Dict, Any, Union
+import torch
 from transformers import PreTrainedTokenizer, PreTrainedModel
 
 from src.utils.logging.logging_config import setup_logging
@@ -84,13 +85,14 @@ def do_sample(
             num_return_sequences=1,
             top_p=0.9,
             temperature=0.6,
-            max_new_tokens=1024,#256
-            streamer=streamer,
+            max_new_tokens=512, # 256
+            # streamer=streamer,
         )
 
         answer = tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0]
         answer = answer[len(prompt)+1:].strip() # try to clean up the answer
-        logger.info(f"😈😈😈 Answer first 20 chars: {answer[:20]}")
+        logger.info(f"🤡🤡🤡 Answer's first 20 chars: {answer[:20]}")
+        torch.cuda.empty_cache()
         return answer
     except Exception as e:
         logger.error(f"Error in do_sample: {e}")
@@ -121,7 +123,7 @@ def generate(
             prompt = row["prompt"]
             prompt_id = row["id"]
 
-            logger.info(f"😈😈😈 Processing prompt: {prompt}")
+            logger.info(f"🤡🤡🤡 Processing prompt's first 20 chars: {prompt[:20]}")
 
             for completion_sample in range(responses_to_generate):
                 logger.info(

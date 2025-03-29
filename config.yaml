@@ -2,7 +2,7 @@
 cuda_visible_devices: "0, 1" # we only have 1 GPU
 
 model_name: "mistralai/Mistral-7B-Instruct-v0.3"
-model_weight_dir: "results/results_2025-03-21_00-54-26/sft/iteration_0"
+model_weight_dir: "/home/ubuntu/MLP-RLHF/Self-Rewarding-Language-Models/results/results_2025-03-24_16-14-55/dpo/iteration_1"
 tokenizer_name: "mistralai/Mistral-7B-Instruct-v0.3"
 
 data_directory: "data"
@@ -24,21 +24,21 @@ peft_config:
   lora_alpha: 16
   lora_r: 16
 
-iterations: 3 # 5
+iterations: 2 # 5
 
 sft_training:
   learning_rate: 5e-5
   batch_size: 4
-  max_seq_length: 2048 #1024
+  max_seq_length: 1024 # 1024
 
 dpo_training:
   learning_rate: 5e-5
   batch_size: 4
-  max_seq_length: 2048 #1024
-  max_prompt_length: 2048 #1024
+  max_seq_length: 1024 # 1024
+  max_prompt_length: 1024 # 1024
 
 generate_prompts:
-  new_prompts: 300 # 500
+  new_prompts: 100 # 500
 
 response_prompts:
-  new_prompts: 4 # 4
+  new_prompts: 4

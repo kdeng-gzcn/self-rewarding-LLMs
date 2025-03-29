@@ -5,6 +5,7 @@ import logging
 from transformers import TextStreamer
 import os
 from typing import List, Dict, Any, Union
+import torch
 from transformers import PreTrainedTokenizer, PreTrainedModel
 
 from src.utils.read_write_jsonl import read_jsonl_file, write_jsonl_file
@@ -123,9 +124,12 @@ def do_sample(
             top_p=0.9,
             temperature=0.6,
             max_new_tokens=1024, # 256
-            streamer=streamer,
+            # streamer=streamer,
         )
         decoded = tokenizer.batch_decode(generated_ids, skip_special_tokens=True)
+
+        logger.info(f"🤡🤡🤡 Clean cuda memory after do_sample in generating prompts")
+        torch.cuda.empty_cache()
 
         return decoded[0]
 
@@ -160,6 +164,7 @@ def generate(
     try:
 
         while len(uniq_prompts) < new_prompts_to_generate:
+            logger.info(f"🤡🤡🤡 Now we have {len(uniq_prompts)} new self-generated questions in this iteration.")
             task_prompts = get_random_prompts(ift_data)
             answer = do_sample(model, tokenizer, task_prompts)
             prompts = extract_prompt(answer)
@@ -170,6 +175,8 @@ def generate(
                     new_prompts.append(
                         {"id": prompt_id, "prompt": prompt, "source": "generated"}
                     )
+
+            torch.cuda.empty_cache()
 
         return new_prompts
 
