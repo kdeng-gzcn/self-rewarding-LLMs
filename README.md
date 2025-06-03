@@ -3,4 +3,4 @@ This is a general framework of self-rewarding-model, where the LLM is asked to g
 
 This project explores Self Rewarding Language Models from [Yuan et al., 2024](https://arxiv.org/abs/2401.10020), utilizing LLM-as-a-Judge to allow a model to self-improve. It integrates Low-Rank Adaptation from [Hu et al., 2021](https://arxiv.org/abs/2106.09685) optimizing adaptability without full tuning.
 
-The codes are mainly from another repo (complete here later)
+The code base is from [here](https://github.com/schauppi/Self-Rewarding-Language-Models).
